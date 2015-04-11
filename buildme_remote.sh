@@ -1,4 +1,4 @@
-docker build -t yantis/filezilla .
+docker build -t yantis/thunderbird .
 
 docker run \
   -ti \

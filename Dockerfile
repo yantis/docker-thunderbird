@@ -16,7 +16,7 @@ MAINTAINER Jonathan Yantis <yantis@yantis.net>
     # Update and force a refresh of all package lists even if they appear up to date.
 RUN pacman -Syyu --noconfirm && \
 
-    # Install Filezilla
+    # Install program
     pacman --noconfirm -S thunderbird \
         --assume-installed hwids \
         --assume-installed kbd \

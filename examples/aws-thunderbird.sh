@@ -48,8 +48,8 @@ ID=$(aws ec2 run-instances \
   --subnet-id ${SUBNETID} | \
     grep InstanceId | awk -F\" '{print $4}')
 
-# Sleep 5 seconds here. Just to give it time to be created.
-sleep 5
+# Sleep 10 seconds here. Just to give it time to be created.
+sleep 10
 echo "Instance ID: $ID"
 
 
