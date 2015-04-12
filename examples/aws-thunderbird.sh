@@ -39,6 +39,19 @@ VOLUMEID=$1 # (this is your external volume to save your files to)
 REGION=us-west-2
 IMAGEID=ami-e7527ed7
 
+# Exit the script if any statements returns a non true (0) value.
+set -e
+
+# Exit the script on any uninitalized variables.
+set -u
+
+# Exit the script if the user didn't specify at least one argument.
+if [ "$#" -ne 1 ]; then
+  echo "Error: You need to specifiy the volume id"
+  exit 1
+fi
+
+
 # Create our new instance
 ID=$(aws ec2 run-instances \
   --image-id ${IMAGEID} \
