@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Docker-thunderbird by yantis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Docker-thunderbird</h1>
+      <h2 class="project-tagline">Dockerized Thunderbird</h2>
+      <a href="https://github.com/yantis/docker-thunderbird" class="btn">View on GitHub</a>
+      <a href="https://github.com/yantis/docker-thunderbird/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/yantis/docker-thunderbird/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="docker-thunderbird" class="anchor" href="#docker-thunderbird" aria-hidden="true"><span class="octicon octicon-link"></span></a>docker-thunderbird</h1>
+
+<p>On Docker hub <a href="https://registry.hub.docker.com/u/yantis/thunderbird">thunderbird</a>
+on Github <a href="https://github.com/yantis/docker-thunderbird">thunderbird</a></p>
+
+<p>This is Thunderbird on Docker. It has three modes: Local (no ssh server), remote with ssh server, as
+well as an optional script for an instant launch AWS EC2 for quick file transfers with 
+storage to EBS volume (Amazon Elastic Block Store). Check out the <a href="https://github.com/yantis/docker-thunderbird/blob/master/examples/aws-thunderbird.sh">aws-thunderbird.sh</a> script for this.
+Also, there is a script to auto create and format your EBS volume <a href="https://github.com/yantis/docker-thunderbird/blob/master/examples/aws-ebs-create-volume-and-format.sh">aws-ebs-create-volume-and-format.sh</a></p>
+
+<h2>
+<a id="usage-local" class="anchor" href="#usage-local" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage (Local)</h2>
+
+<p>The recommended way to run this container looks like this. This example launches Thunderbird seamlessly as
+if it was another program on your computer.</p>
+
+<div class="highlight highlight-bash"><pre>xhost +si:localuser:<span class="pl-s"><span class="pl-pds">$(</span>whoami<span class="pl-pds">)</span></span>
+docker run \
+        -d \
+        -e DISPLAY \
+        -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+        -u docker \
+        -v <span class="pl-smi">$HOME</span>/docker-data/thunderbird:/home/docker/.thunderbird/ \
+        yantis/thunderbird thunderbird</pre></div>
+
+<h2>
+<a id="breakdown-local" class="anchor" href="#breakdown-local" aria-hidden="true"><span class="octicon octicon-link"></span></a>Breakdown (Local)</h2>
+
+<div class="highlight highlight-bash"><pre>$ xhost +si:localuser:yourusername</pre></div>
+
+<p>Allows your local user to access the xsocket. Change yourusername or use $(whoami)
+or $USER if your shell supports it.</p>
+
+<div class="highlight highlight-bash"><pre>docker run \
+           -d \
+           -e DISPLAY \
+           -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+           -u docker \
+           -v /:/host \
+           -v <span class="pl-smi">$HOME</span>/docker-data/thunderbird:/home/docker/.thunderbird/ \
+           yantis/thunderbird thunderbird</pre></div>
+
+<p>This follows these docker conventions:</p>
+
+<ul>
+<li>
+<code>-d</code> run in daemon mode. </li>
+<li>
+<code>-e DISPLAY</code> sets the host display to the local machines display.</li>
+<li>
+<code>-v /tmp/.X11-unix:/tmp/.X11-unix:ro</code> bind mounts the X11 socks on your local machine
+to the containers and makes it read only.</li>
+<li>
+<code>-u docker</code> sets the user to docker. (or you could do root as well)</li>
+<li>
+<code>-v ~/docker-data/thunderbird:/home/docker/.thunderbird/</code> This is where to save your config files.</li>
+<li>
+<code>yantis/thunderbird thunderbird</code> You need to call thunderbird because if you do not it will a launch the ssh
+server instead as a default.</li>
+</ul>
+
+<h2>
+<a id="usage-remote-ssh" class="anchor" href="#usage-remote-ssh" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage (Remote SSH)</h2>
+
+<p>The recommended way to run this container over SSH looks like this. This example launches an high performance SSH
+server with X-forwarding enabled. Which you can ssh -X (or -Y) into. Check out the <a href="https://github.com/yantis/docker-thunderbird/blob/master/examples/remote-thunderbird.sh">remote-thunderbird</a>
+and the <a href="https://github.com/yantis/docker-thunderbird/blob/master/examples/aws-thunderbird.sh">aws-thunderbird.sh</a> script for an example of this.</p>
+
+<div class="highlight highlight-bash"><pre>docker run \
+    -ti \
+    --rm \
+    -v <span class="pl-smi">$HOME</span>/.ssh/authorized_keys:/authorized_keys:ro \
+    -p 49158:22 \
+    -v <span class="pl-k">~</span>/docker-data/thunderbird:/home/docker/.thunderbird/ \
+    yantis/thunderbird</pre></div>
+
+<h2>
+<a id="breakdown-remote-ssh" class="anchor" href="#breakdown-remote-ssh" aria-hidden="true"><span class="octicon octicon-link"></span></a>Breakdown (Remote SSH)</h2>
+
+<p>This follows these docker conventions:</p>
+
+<ul>
+<li>
+<code>-ti</code> will run an interactive session that can be terminated with CTRL+C.</li>
+<li>
+<code>--rm</code> will run a temporary session that will make sure to remove the container on exit.</li>
+<li>
+<code>-v $HOME/.ssh/authorized_keys:/authorized_keys:ro</code> Optionaly share your public keys with the host.
+This is particularlly useful when you are running this on another server that already has SSH. Like an 
+Amazon EC2 instance. WARNING: If you don't use this then it will just default to the user pass of docker/docker
+(If you do specify authorized keys it will disable all password logins to keep it secure).</li>
+<li>
+<code>-v ~/docker-data/thunderbird:/home/docker/.thunderbird/</code> This is where to save your config files.</li>
+<li>
+<code>yantis/thunderbird</code> the default mode is SSH so no need to run any commands.</li>
+</ul>
+
+<p>Here is a screenshot of Thunderbird running on Docker.
+<img src="http://yantis-scripts.s3.amazonaws.com/Screenshot_2015-04-10_22-40-50.png" alt=""></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/yantis/docker-thunderbird">Docker-thunderbird</a> is maintained by <a href="https://github.com/yantis">yantis</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-61848149-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
+
