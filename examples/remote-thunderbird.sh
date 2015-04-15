@@ -20,7 +20,7 @@
 # Exit the script if any statements returns a non true (0) value.
 set -e
 
-# Exit the script on any uninitalized variables.
+# Exit the script on any uninitialized variables.
 set -u
 
 # Exit the script if the user didn't specify at least two arguments.
@@ -117,7 +117,7 @@ aws ec2 detach-volume \
 # Now that we are done. Delete the instance.
 aws ec2 terminate-instances --instance-ids $ID
 
-USER_NAME=$1
+USER_NAME=$2
 HOST_NAME=$2
 
 # Pick a random port as we might have multiple things running.

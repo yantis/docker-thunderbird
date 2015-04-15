@@ -30,7 +30,7 @@ IMAGEID=ami-e7527ed7
 # Exit the script if any statements returns a non true (0) value.
 set -e
 
-# Exit the script on any uninitalized variables.
+# Exit the script on any uninitialized variables.
 set -u
 
 # Exit the script if the user didn't specify at least one argument.
@@ -54,7 +54,7 @@ echo "Instance ID: $ID"
 
 # Create our new volume
 VOLUMEID=$(aws ec2 create-volume \
-  --size $1 \
+  --size $2 \
   --region $REGION \
   --availability-zone $AVAILABILITY_ZONE \
   --volume-type gp2 | \
