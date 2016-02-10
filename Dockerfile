@@ -14,7 +14,7 @@
 FROM yantis/ssh-hpn-x
 MAINTAINER Jonathan Yantis <yantis@yantis.net>
 
-    # Update and force a refresh of all package lists even if they appear up to date.
+# Update and force a refresh of all package lists even if they appear up to date.
 RUN pacman -Syu --noconfirm && \
 
     # Install program
