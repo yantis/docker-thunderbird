@@ -16,7 +16,7 @@ docker run \
     -v $HOME/.ssh/authorized_keys:/authorized_keys:ro \
     -p 49158:22 \
     -v ~/appdata/thunderbird:/home/docker/.thunderbird/ \
-    ironicbadger/thunderbird
+    ironicbadger/docker-thunderbird
 ```
 
 ## Breakdown (Remote SSH)
@@ -48,7 +48,7 @@ docker run \
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
         -u docker \
         -v $HOME/docker-data/thunderbird:/home/docker/.thunderbird/ \
-        ironicbadger/thunderbird thunderbird
+        ironicbadger/docker-thunderbird thunderbird
 ```
 
 ## Breakdown (Local)
@@ -69,7 +69,7 @@ docker run \
            -u docker \
            -v /:/host \
            -v $HOME/docker-data/thunderbird:/home/docker/.thunderbird/ \
-           ironicbadger/thunderbird thunderbird
+           ironicbadger/docker-thunderbird thunderbird
 ```
 This follows these docker conventions:
 
