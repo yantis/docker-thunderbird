@@ -8,16 +8,18 @@
 # FROM yantis/archlinux-small-ssh-hpn
 # FROM yantis/ssh-hpn-x
 # YOU ARE HERE
+# Forked from yantis/docker-thunderbird by IronicBadger
 ############################################################
 
 FROM yantis/ssh-hpn-x
 MAINTAINER Jonathan Yantis <yantis@yantis.net>
 
-    # Update and force a refresh of all package lists even if they appear up to date.
-RUN pacman -Syyu --noconfirm && \
+# Update and force a refresh of all package lists even if they appear up to date.
+RUN pacman -Syu --noconfirm && \
 
     # Install program
     pacman --noconfirm -S thunderbird \
+        libcanberra \
         --assume-installed hwids \
         --assume-installed kbd \
         --assume-installed kmod \
